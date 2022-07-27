@@ -3,8 +3,6 @@
 import time
 import os, subprocess
 import random
-import objects 
-from objects import * 
 #from colorama import Fore
 #from colorama import Back
 import rich
@@ -12,30 +10,19 @@ from rich.console import Console
 #console.print(Fore.GREEN)
 #console.print(Back.BLACK)
 
-start = False
-
 console = Console(width=80)
 console = Console(style = "bold green")
 
-console.print(
-
-'\n\n###################################################\n\n\n\n                    ESCAPE THIS!          \n\n                THE WONDER EDITION        \n\n\n\n\n                  by Myxtapes 2022        \n\n\n###################################################')     
-
-time.sleep(2)
+console.print('\n\n###################################################\n\n\n\n                    ESCAPE THIS!          \n\n                THE WONDER EDITION        \n\n\n\n\n                  by Myxtapes 2022        \n\n\n###################################################')     
 
 console.print('\n')
+time.sleep(2)
 
 yourName = input("Please input your name: ")
 
-console.print("\nWelcome to Escape This! The Wonder Edition. Your task is to escape from the room. To play, simply type in the commands you would like to execute, followed by the object you would like to interact with. Possible commands are: \n\nlook\nsearch\nwalk\nmove\nopen\nunlock\ntake\nread\npush/pull\nplay\nuse\n\nAt anytime, you can check this list of commands by typing 'commands'.\n\nIf you would like to check the current state of your inventory, type 'inventory'.\n")
-
-while start == False:
-     go = input("\nWhen you are ready to begin, type 'start': ")
-     if 'start' in go:
-        start = True
-        continue
-        
-console.print("\nYou are in what looks to be some kind of study, comfortably furnished with a desk, a couch, bookshelves and other study-like furniture. You take particular note of the floor, less due to its rich, enviable hardwood, and more due to the rug that lies upon it. The rug, you notice, was designed in the style of a large compass.\n\nYou decide it would be wise to use the compass on the rug as a means to orient and navigate yourself around the room. In so doing, you see that you are standing in the north end of the room. If you would like to learn more specifically about the room, just say which direction you would like to look, using the compass as your guide. For example, if you would like to look at the north end of the room, type, 'look north', or, 'look at the north wall'.") 
+console.print("\nWelcome to Escape This! The Wonder Edition. Your goal is to escape from your starting room. To play, simply type in the commands you would like to execute, followed by the object you would like to interact with. Possible commands are: \n\nlook\nsearch\ntake\nuse\n\nput\nwalk\nmove\nopen\nunlock\nread\nplay\n\nAt anytime, you can check this list of commands by typing 'commands'.\n\nIf you would like to check the current state of your inventory, type 'inventory'.\n")
+print("\nWhen you are ready to begin, press 'Enter'.")
+input("")
 
 playerLoc = ['north']
 modelInventory = []
@@ -61,7 +48,8 @@ deskSeen = ['true']
 pianoPlayed = ['false']
 bookshelfOneItems = ['Famous Prison Cakes', 'The Music of Moby by R. Melville Hall', 'Scrambled Eggs for Breakfast, Lunch and Dinner']
 bookshelfTwoItems = ['The Clock Echoes', 'Wonders of the World: Volume One', 'Wonders of the World: Volume Two']
-
+failQuotes = ["\nThat didn't seem to work", "\nHmm...That didn't seem to accomplish anything.", "\nSurprisingly, nothing happens.", "\nNothing happens.", "\nNothing of note occurs.", "\nBupkis.", "\nNada parece haber pasado."]
+  
 def fail():
     console.print(random.choice(failQuotes))
     
@@ -1235,7 +1223,7 @@ class Door(Object):
         if playerLoc == self.loc:  
           console.print(str(self.touch)) 
         elif playerLoc != self.loc:
-          console.print('nYou get closer to the door. ' + str(self.touch))
+          console.print('n\You get closer to the door. ' + str(self.touch))
           playerloc = self.loc
         elif self.state == 'unlocked':
           console.print("\nYou hesitate before the door, running your hand along the menace that once kept you trapped in the room, reminiscing about your failures and successes, and whisper, quietly, 'So long old friend.' You wipe your eyes on your sleeve.")
@@ -2233,10 +2221,10 @@ class Basil_Left(Object):
     def Sign(self):
         global playerLoc
         if playerLoc == self.loc: 
-          console.print ('\nYou place the last of the sketches upon the shelves within the display, and take a step back. After a brief moment of intense anticipation....You head a gentle clunking sound coming from the bottom of the display. Looking closer at the sound, you see that a trap door has opened up in the display base, and inside that trap door you find a small model of Machu Picchu.') 
+          console.print ('\nYou place the last of the sketches upon the shelves within the display, and take a step back. After a brief moment of intense anticipation...You hear a gentle clunking sound coming from the bottom of the display. Looking closer at the sound, you see that a trap door has opened up in the display base, and inside that trap door you find a small model of Machu Picchu.') 
           machuPicchu.state = 'found'
         elif playerLoc != self.loc:
-          console.print('\nYou place the last of the sketches upon the shelves within the display, and take a step back. After a brief moment of intense anticipation....You head a gentle clunking sound coming from the bottom of the display. Looking closer at the sound, you see that a trap door has opened up in the display base, and inside that trap door you find a small model of Machu Picchu.')     
+          console.print('\nYou place the last of the sketches upon the shelves within the display, and take a step back. After a brief moment of intense anticipation...You hear a gentle clunking sound coming from the bottom of the display. Looking closer at the sound, you see that a trap door has opened up in the display base, and inside that trap door you find a small model of Machu Picchu.')     
           playerLoc = self.loc
           machuPicchu.state = 'found'
 
@@ -2349,13 +2337,20 @@ class RecordPlayer(Object):
 
     def PlayMoby(self):
         global playerLoc
-        if playerLoc == self.loc:
+        if playerLoc == self.loc and token.state == 'lost':
           console.print('\nYou take the Moby album Play from the collection, and pull the record out. As you do, a small, gold token falls out of the sleeve and drops to the floor.')
-          token.state = 'found'      
-        elif playerLoc != self.loc:
+          token.state = 'found'
+        elif playerLoc == self.loc and token.state != 'lost':
+          console.print('\nYou take the Moby album Play from the collection, and pull the record out. You look inside the sleeve for more gold tokens, alas, there are no more to be found.') 
+        elif playerLoc != self.loc and token.state == 'lost':
           console.print('\nYou walk to the record collection, take the Moby album Play from the collection, and pull the record out. As you do, a small, gold token falls out of the sleeve and drops to the floor.')
           token.state = 'found'
           playerLoc = self.loc
+        elif playerLoc != self.loc and token.state != 'lost':
+          console.print('\nYou walk to the record collection, take the Moby album Play from the collection, and pull the record out. You look inside the sleeve for more gold tokens, alas, there are no more to be found.')
+          playerLoc = self.loc          
+
+           
 
     def Walk(self):
       global playerLoc
@@ -2458,18 +2453,12 @@ piano = Piano()
 rug = Rug()
 hatch = Hatch()
 
-failQuotes = ["\nThat didn't seem to work", "\nHmm...That didn't seem to accomplish anything.", "\nSurprisingly, nothing happens.", "\nNothing happens.", "\nNothing of note occurs.", "\nBupkis.", "\nNada parece haber pasado."]
 
-def fail(): 
-   console.print("\nThat didn't seem to work.")
-
-
-  
 #INITIALIZE GAME 
   
 def main(): 
 
-  """PUZZLE STATES""" 
+  """PUZZLE STATES"""
   score = 0 
   playerLoc = 'north' 
   playerOrient = 'south' 
@@ -2513,16 +2502,19 @@ def main():
   jordanX = 0
   indiaX = 0
   chinaX = 0
+  startTime = time.perf_counter()
+
 
 
   """CORE GAME / INPUT LOOPS"""
   
   while True:
-    startTime = time.perf_counter() 
-    text = input("\nCommand: ").lower()
 
+    text = input("\nCommand: ").lower()
+    
     """SYNONYMS / COMMAND REPLACE"""
-    text = text.replace ('hello','start')
+    text = text.replace ('touch','search')
+    text = text.replace('put','use')
 
     """GAME INPUT AND RESPONSE LOGIC"""
     
@@ -3152,7 +3144,9 @@ def main():
     elif 'close' in text and 'window' in text: 
         window.Close() 
     elif 'walk' in text and 'window' in text: 
-        window.Walk()                
+        window.Walk()
+    elif 'break' in text and 'window' in text or 'smash' in text and 'window' in text: 
+        console.print("\nWorking yourself into a frothy rage, you ball your hands up into fists and cock them back, ready to smash the window before you into pieces in a desperate attempt to escape the room by any means necessary.\n\nMoments before your fists begin their descent towards the helpless window, some sense returns to you in a flash, and you find yourself thinking, 'No! There must be a better way!'\n\nYour sanity returns, and you stare confusingly at your still balled fists. You open them back up, take a minute to collect yourself, and return to solving the room, 'Without breaking things!' you say to yourself aloud.") 
          
     elif 'look' in text and 'cabinet' in text: 
         filingCabinet.look() 
@@ -3338,8 +3332,8 @@ def main():
     elif 'search' in text and 'panel' in text or 'search' in text and 'shapes' in text: 
       shapesPuzzle.Touch() 
 
-    elif 'solve' in text and 'panel' in text or 'solve' in text and 'shapes' in text or 'use' in text and 'panel' in text or 'use' in text and 'shapes' in text or 'numbers' in text and 'panel' in text or 'numbers' in text and 'shapes' in text or 'combination' in text and 'panel' in text or 'combination' in text and 'shapes' in text: 
-        console.print("\Confident you have what it takes to open up the strange panel, you approach it with steady resolve.")
+    elif 'solve' in text and 'panel' in text or 'solve' in text and 'shapes' in text or 'use' in text and 'panel' in text or 'use' in text and 'shapes' in text or 'numbers' in text and 'panel' in text or 'numbers' in text and 'shapes' in text or 'combination' in text and 'panel' in text or 'combination' in text and 'shapes' in text or 'open' in text and 'panel' in text or 'unlock' in text and 'panel' in text: 
+        console.print("\nConfident you have what it takes to open up the strange panel, you approach it with steady resolve.")
 
         circleTrial = input('\nWhich number would you like to set the circle to? ') 
         if circleTrial not in shapesRange: 
@@ -3392,8 +3386,6 @@ def main():
       panel.look() 
     elif 'search' in text and 'panel' in text: 
       panel.touch() 
-    elif 'open' in text and 'panel' in text: 
-      panel.Open() 
     elif 'take' in text and 'panel' in text: 
       panel.Take()  
 
@@ -3405,7 +3397,7 @@ def main():
       if "y" in sketchQuery:
         sketchLook = True
         while sketchLook == True:
-          console.print("\nWhich sketch would you like to look at? If you are done looking, type 'exit'.")
+          print("\nWhich sketch would you like to look at? If you are done looking, type 'exit'.")
           sketchQuery = input("\nSketch: ").lower()
           if "exit" in sketchQuery:
             console.print("\nDeciding that you have seen enough of these sketches for now, you return your efforts to solving the room.")
@@ -3413,25 +3405,25 @@ def main():
             break
           elif "zeus" in sketchQuery or "statue" in sketchQuery:
             console.print('\nThe sketch of the Statue of Zeus in Olympia shows the Greek God Zeus sitting upon a throne. In his left hand he is holding a large sceptre, and in his right hand he is holding a statue of Nike, the winged god of victory.')
-            time.sleep(5)
+    
           elif "temple" in sketchQuery or "artemis" in sketchQuery:
             console.print('\nThe Temple of Artemis is a large columned temple, with many friezes on its facade depicting scenes from Greek mythology. Among the friezes, you identify what is most likely a depiction of the Greek God Artemis, identifiable due to a bow being carried in one hand, and several arrows being carried in the other.')
-            time.sleep(5) 
+
           elif "pyramid" in sketchQuery or "giza" in sketchQuery:
-            console.print("\nThe sketch of the Great Pyramid of Giza shows the pyramid in its context within the larger Giza plateu and in its original state - with its smooth, white, triangular walls, and topped with a smaller gold pyramidal capstone. You also see the other two main pyramids within the complex, as well as the Sphynx, facing the setting constellation of Leo the Lion.")
-            time.sleep(5)
+            console.print("\nThe sketch of the Great Pyramid of Giza shows the pyramid in its context within the larger Giza plateau and in its original state - with its smooth, white, triangular walls, and topped with a smaller gold pyramidal capstone. You also see the other two main pyramids within the complex, as well as the Sphynx, facing the setting constellation of Leo the Lion.")
+
           elif "mausoleum" in sketchQuery or "halicarnassus" in sketchQuery or "masoleum" in sketchQuery or "halicarnasus" in sketchQuery:
             console.print('\nThe Mausoleum at Halicarnassus is a many-levelled structure, topped with a temple in the classical Greek style. The temple itslef sits upon several large, flat vertical pedestals, each separated by smaller, intricately detailed friezes. Surprising yourself with your memory, you recall that the Mausoleum was built as a tomb for an ancient king named Mausolus and his wife Artemisia.')
-            time.sleep(5)
+
           elif "hanging" in sketchQuery or "garden" in sketchQuery or "gardens" in sketchQuery or "babylon" in sketchQuery:
             console.print("\nThe sketch of the Hanging Gardens of Babylon shows a beautiful and luscious botanic structure, covered with flowing waterfalls, columns and innumerable exotic plants. You note many separate levels and walled off areas within the larger structure, each with its own garden. You think to yourself that it is one of the most wonderful buildings you have ever seen.")
-            time.sleep(5)
+
           elif "lighthouse" in sketchQuery or "alexandria" in sketchQuery or 'ligthouse' in sketchQuery:
             console.print('\nThe Great Lighthouse stands on a small island in the sea, and towers above the magnificent ancient city of Alexandria, on the north coast of Egypt. Atop the lighthouse you spot a huge flame that lights up the port and that would no doubt have been visible for kilometers in the dark Mediterranean nights.')
-            time.sleep(5)
+
           elif "colossus" in sketchQuery or "colosus" in sketchQuery or "rhodes" in sketchQuery or "rodes" in sketchQuery:
             console.print('\nThe sketch of the Colossus of Rhodes shows a monumentally large statue, standing astride the harbour entrance to the ancienct city of Rhodes. You look in disbelief at the enormity of the statue, and wonder how on Earth an object of that size, with such impressive life-like detail, could have been built in so distant an age.')
-            time.sleep(5)
+
           else:
               console.print('\nThere is no sketch that you can see that matches that title.')
 
@@ -3467,7 +3459,8 @@ def main():
           if len(ancientSolution) == 7 and ancientSolution == ancientWonders:
             basilLeft.Sign()
             display = 'solved'
-            continue
+            break
+        
           elif len(ancientSolution) == 7 and ancientSolution != ancientWonders:
             console.print("\nAfter placing the last sketch upon the shelf, you stand back and wait. Suddenly, the shelves begin to slide into the wall, causing the sketches to fall back to the bottom of the display, where they lie once more in a disordered mess.\n\nAfter another moment, the shelves reveal themselves again. Nothing else happens that you can see or hear.\n\nYou did not, it seems, organize the sketches correctly.")
             ancientSolution.clear()
@@ -3497,3 +3490,4 @@ def main():
       
 if __name__ == '__main__':
    main()   
+
